@@ -1,5 +1,6 @@
 package com.example.dezhi_final;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -15,10 +16,11 @@ import com.example.dezhi_final.model.Customer;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
-final int REQUEST_CODE
-    ListView listView;
-    Button btnAdd, btnWithdraw;
+    final static int REQUEST_CODE_DETAIL = 1;
+    final static int REQUEST_CODE_WITHDRAW = 2;
 
+    ListView listView;
+    Button btnAdd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,8 +34,61 @@ final int REQUEST_CODE
         listView = findViewById(R.id.listViewOfCustomers);
         btnAdd = findViewById(R.id.btnAdd);
         btnAdd.setOnClickListener(this);
-        btnWithdraw = findViewById(R.id.btnWithDraw);
-        btnWithdraw.setOnClickListener(this);
+
+        initializeCustomersList();
+
+        ArrayAdapter<Customer> listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
+                Customer.customers);
+        // assign the adaptor to the list view
+        listView.setAdapter(listAdapter);
+
+        // OnItemClickListener
+        AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> listViewOfFlowers, View itemView, int position, long id) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("bundleExtra", Customer.customers.get(position));
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra("intentExtra", bundle);
+                startActivityForResult(intent, REQUEST_CODE_DETAIL);
+            }
+        };
+        listView.setOnItemClickListener(onItemClickListener);
+
+        // OnItemLongClickListener
+        AdapterView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Intent intent = new Intent(MainActivity.this, WithdrawActivity.class);
+                intent.putExtra("CurrentFlowerObject", Customer.customers.get(i));
+                startActivityForResult(intent, REQUEST_CODE_WITHDRAW);
+                return true;
+            }
+        };
+        listView.setOnItemLongClickListener(onItemLongClickListener);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btnAdd://only one button has onClickListener, so can delete switch
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_DETAIL);
+                break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        ArrayAdapter<Customer> listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
+                Customer.customers);
+        // assign the adaptor to the list view
+        listView.setAdapter(listAdapter);
+    }
+
+    private void initializeCustomersList() {
         if (Customer.customers.size() == 0) {
             Customer customer1 = new Customer("1001", "2020-06-18", 1000, "Dezhi", "Ding", "4377666666", "1001");
             Customer customer2 = new Customer("1002", "2020-06-18", 1000, "Mark", "Tem", "4377666666", "1002");
@@ -42,57 +97,5 @@ final int REQUEST_CODE
             Customer.customers.add(customer2);
             Customer.customers.add(customer3);
         }
-        ArrayAdapter<Customer> listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
-                Customer.customers);
-        // assign the adaptor to the list view
-        listView.setAdapter(listAdapter);
-
-        AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> listViewOfFlowers, View itemView, int position, long id) {
-
-
-                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-                intent.putExtra("CurrentFlowerObject", Customer.customers.get(position));
-                startActivityForResult(intent,1);
-            }
-        };
-        listView.setOnItemClickListener(onItemClickListener);
-        AdapterView.OnItemLongClickListener onItemLongClickListener = new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
-
-
-                Intent intent = new Intent(MainActivity.this, WithdrawActivity.class);
-                intent.putExtra("CurrentFlowerObject", Customer.customers.get(i));
-                startActivity(intent);
-                return true;
-            }
-        };
-        listView.setOnItemLongClickListener(onItemLongClickListener);
-
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btnAdd:
-                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-                startActivity(intent);
-                break;
-            case R.id.btnWithDraw:
-
-                Intent intent1 = new Intent(MainActivity.this, WithdrawActivity.class);
-                intent1.putExtra("CurrentFlowerObject", Customer.customers.get(1));
-                startActivity(intent1);
-                break;
-
-        }
-
-    }
-
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, int l) {
-
-        return true;
     }
 }

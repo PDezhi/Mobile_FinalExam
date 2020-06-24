@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.dezhi_final.model.Customer;
 
@@ -17,7 +18,6 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     Button btnAdd, btnFind, btnRemove, btnClear, btnUpdate, btnShowAll;
 
     Customer customer;
-    int type = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,8 +48,15 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         btnShowAll = findViewById(R.id.btnWithShowAll);
         btnShowAll.setOnClickListener(this);
         customer = new Customer();
-        customer = (Customer) getIntent().getSerializableExtra("CurrentFlowerObject");
-        setValuesToElements();
+//        customer = (Customer) getIntent().getSerializableExtra("CurrentFlowerObject");
+//        setValuesToElements();
+        if (getIntent().hasExtra("intentExtra")) {
+            Bundle bundle = getIntent().getBundleExtra("intentExtra");
+            Serializable bundledCustomer = bundle.getSerializable("bundleExtra");
+            customer = (Customer) bundledCustomer;
+            if (!customer.equals(null))
+                setValuesToElements();
+        }
     }
 
     @Override
@@ -84,14 +91,13 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         customer.setFamily(editTextFamily.getText().toString());
         customer.setPhone(editTextPhone.getText().toString());
         customer.setSIN(editTextSIN.getText().toString());
-            Customer.customers.add(customer);
+        Customer.customers.add(customer);
     }
 
     private void clear() {
         editTextAccNo.setText("");
         editTextOpenDate.setText("");
         editTextBalance.setText("");
-        ;
         editTextName.setText("");
         editTextFamily.setText("");
         editTextPhone.setText("");
@@ -99,20 +105,18 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void remove() {
-        customer.setAccount(editTextAccNo.getText().toString());
-        customer.setBalance(Float.valueOf(editTextBalance.getText().toString()));
-        customer.setFirstName(editTextName.getText().toString());
-        customer.setFamily(editTextFamily.getText().toString());
-        customer.setPhone(editTextPhone.getText().toString());
-        customer.setSIN(editTextSIN.getText().toString());
+        setElementToObject();
         int index = Customer.customers.indexOf(customer);
-        if(index != -1)
+        if (index != -1) {
             Customer.customers.remove(index);
+            clear();
+        } else {
+            Toast.makeText(this, "The customer is not exist!", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void find() {
         String SIN = editTextSIN.getText().toString();
-        Customer customer = new Customer();
         for (Customer one : Customer.customers) {
             if (one.getSIN().equals(SIN)) {
                 customer = one;
@@ -128,8 +132,17 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     }
 
     private void showAll() {
-        Intent intent = new Intent(DetailActivity.this, MainActivity.class);
-        startActivity(intent);
+
+//        Intent intent = new Intent(DetailActivity.this, MainActivity.class);
+//        startActivity(intent);
+        String strResult = "show_all";
+        //------------------------------------ Create an intent and putExtra result string
+        Intent intent = new Intent();
+        intent.putExtra("action", strResult);
+
+        //------------------------------------ Set Result for MainActivity
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     private void setValuesToElements() {
@@ -149,12 +162,5 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         customer.setFamily(editTextFamily.getText().toString());
         customer.setPhone(editTextPhone.getText().toString());
         customer.setSIN(editTextSIN.getText().toString());
-    }
-
-    private void getDataFromParent() {
-
-        customer = (Customer) getIntent().getSerializableExtra("CurrentFlowerObject");
-
-
     }
 }
