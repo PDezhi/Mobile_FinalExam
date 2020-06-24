@@ -14,6 +14,7 @@ import android.widget.ListView;
 import com.example.dezhi_final.model.Customer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     final static int REQUEST_CODE_DETAIL = 1;
@@ -36,9 +37,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         btnAdd.setOnClickListener(this);
 
         initializeCustomersList();
-
+        Collections.sort(Customer.customers);
         ArrayAdapter<Customer> listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
-                Customer.customers);
+               Customer.customers);
         // assign the adaptor to the list view
         listView.setAdapter(listAdapter);
 
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        Collections.sort(Customer.customers);
         ArrayAdapter<Customer> listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
                 Customer.customers);
         // assign the adaptor to the list view
