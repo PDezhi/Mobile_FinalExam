@@ -2,6 +2,7 @@ package com.example.dezhi_final;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -16,6 +17,9 @@ import java.io.Serializable;
 public class DetailActivity extends AppCompatActivity implements View.OnClickListener {
     EditText editTextAccNo, editTextOpenDate, editTextBalance, editTextName, editTextFamily, editTextPhone, editTextSIN;
     Button btnAdd, btnFind, btnRemove, btnClear, btnUpdate, btnShowAll;
+    final static String ALERTDIALOG_MESSAGE_OF_ADD = "Do you want to add this customer?";
+    final static String ALERTDIALOG_MESSAGE_OF_DELETE = "Do you want to delete this customer?";
+    final static String ALERTDIALOG_MESSAGE_OF_UPDATE = "Do you want to update this customer?";
 
     Customer customer;
 
@@ -45,7 +49,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         btnClear.setOnClickListener(this);
         btnUpdate = findViewById(R.id.btnUpdate);
         btnUpdate.setOnClickListener(this);
-        btnShowAll = findViewById(R.id.btnWithShowAll);
+        btnShowAll = findViewById(R.id.btnShowAll);
         btnShowAll.setOnClickListener(this);
         customer = new Customer();
 //        customer = (Customer) getIntent().getSerializableExtra("CurrentFlowerObject");
@@ -63,21 +67,30 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btnAdd:
-                add();
+                if (editTextSIN.getText().toString().equals("") || editTextName.getText().toString().equals("") || editTextFamily.getText().toString().equals(""))
+                    Toast.makeText(this, "You must enter SIM, Name, Family!", Toast.LENGTH_LONG).show();
+                else
+                    showAlertDialogCRUD(view, ALERTDIALOG_MESSAGE_OF_ADD);
                 break;
-            case R.id.btnFind:
-                find();
+            case R.id.btnUpdate:
+                if (editTextSIN.getText().toString().equals("") || editTextName.getText().toString().equals("") || editTextFamily.getText().toString().equals(""))
+                    Toast.makeText(this, "You must enter SIM, Name, Family!", Toast.LENGTH_LONG).show();
+                else
+                    showAlertDialogCRUD(view, ALERTDIALOG_MESSAGE_OF_UPDATE);
                 break;
             case R.id.btnRemove:
-                remove();
+                if (editTextSIN.getText().toString().equals(""))
+                    Toast.makeText(this, "You must enter SIN!", Toast.LENGTH_LONG).show();
+                else
+                    showAlertDialogCRUD(view, ALERTDIALOG_MESSAGE_OF_DELETE);
                 break;
             case R.id.btnClear:
                 clear();
                 break;
-            case R.id.btnUpdate:
-                update();
+            case R.id.btnFind:
+                find();
                 break;
-            case R.id.btnWithShowAll:
+            case R.id.btnShowAll:
                 showAll();
                 break;
         }
@@ -91,9 +104,13 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         customer.setFamily(editTextFamily.getText().toString());
         customer.setPhone(editTextPhone.getText().toString());
         customer.setSIN(editTextSIN.getText().toString());
-        Customer.customers.add(customer);
-        Toast.makeText(this,"Customer was added!",Toast.LENGTH_LONG).show();
-        clear();
+        if (!customer.getSIN().equals("")) {
+            Customer.customers.add(customer);
+            Toast.makeText(this, "This customer was added!", Toast.LENGTH_LONG).show();
+            clear();
+        } else
+            Toast.makeText(this, "You must enter the SIN!", Toast.LENGTH_LONG).show();
+
     }
 
     private void clear() {
@@ -111,7 +128,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         int index = Customer.customers.indexOf(customer);
         if (index != -1) {
             Customer.customers.remove(index);
-            Toast.makeText(this,"Customer was deleted!",Toast.LENGTH_LONG).show();
+            Toast.makeText(DetailActivity.this, "The customer was Deleted!", Toast.LENGTH_SHORT).show();
             clear();
         } else {
             Toast.makeText(this, "The customer is not exist!", Toast.LENGTH_LONG).show();
@@ -120,20 +137,22 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
 
     private void find() {
         String SIN = editTextSIN.getText().toString();
-        for (Customer one : Customer.customers) {
-            if (one.getSIN().equals(SIN)) {
-                customer = one;
+        if (!SIN.equals("")) {
+            for (Customer one : Customer.customers) {
+                if (one.getSIN().equals(SIN)) {
+                    customer = one;
+                }
             }
-        }
-        setValuesToElements();
+            setValuesToElements();
+        } else
+            Toast.makeText(this, "Please enter the SIN !", Toast.LENGTH_LONG).show();
     }
 
     private void update() {
         setElementToObject();
         int index = Customer.customers.indexOf(customer);
         Customer.customers.set(index, customer);
-        Toast.makeText(this,"Customer was updated!",Toast.LENGTH_LONG).show();
-        clear();
+        Toast.makeText(this, "This customer was updated!", Toast.LENGTH_LONG).show();
     }
 
     private void showAll() {
@@ -145,6 +164,38 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         //------------------------------------ Set Result for MainActivity
         setResult(RESULT_OK, intent);
         finish();
+    }
+
+    public void showAlertDialogCRUD(View view, String dialogMessage) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // type 2
+        builder.setTitle("AlertDialog")
+                .setMessage(dialogMessage)
+                .setCancelable(false)
+                .setIcon(android.R.drawable.ic_dialog_info)
+
+                // We just define event listener for yes button,
+                // but it can be defined for 'No' and 'Cancel' as well
+                .setPositiveButton("Yes",
+                        (dialogInterface, i) ->
+                        {
+                            switch (view.getId()) {
+                                case R.id.btnAdd:
+                                    add();
+                                    break;
+                                case R.id.btnUpdate:
+                                    update();
+                                    break;
+                                case R.id.btnRemove:
+                                    remove();
+                                    break;
+                            }
+                        })
+                .setNegativeButton("No", null)
+                .setNeutralButton("Cancel", null);
+
+        builder.show();
     }
 
     private void setValuesToElements() {
