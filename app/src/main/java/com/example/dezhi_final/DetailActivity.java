@@ -92,6 +92,8 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         customer.setPhone(editTextPhone.getText().toString());
         customer.setSIN(editTextSIN.getText().toString());
         Customer.customers.add(customer);
+        Toast.makeText(this,"Customer was added!",Toast.LENGTH_LONG).show();
+        clear();
     }
 
     private void clear() {
@@ -109,6 +111,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         int index = Customer.customers.indexOf(customer);
         if (index != -1) {
             Customer.customers.remove(index);
+            Toast.makeText(this,"Customer was deleted!",Toast.LENGTH_LONG).show();
             clear();
         } else {
             Toast.makeText(this, "The customer is not exist!", Toast.LENGTH_LONG).show();
@@ -129,12 +132,11 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         setElementToObject();
         int index = Customer.customers.indexOf(customer);
         Customer.customers.set(index, customer);
+        Toast.makeText(this,"Customer was updated!",Toast.LENGTH_LONG).show();
+        clear();
     }
 
     private void showAll() {
-
-//        Intent intent = new Intent(DetailActivity.this, MainActivity.class);
-//        startActivity(intent);
         String strResult = "show_all";
         //------------------------------------ Create an intent and putExtra result string
         Intent intent = new Intent();
