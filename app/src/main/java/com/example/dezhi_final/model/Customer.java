@@ -3,13 +3,11 @@ package com.example.dezhi_final.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
-public class Customer implements Serializable,Comparable {
-    String account;
-    String openDate;
-    float balance;
-
+public class Customer implements Serializable, Comparable {
+    Account account;
     String firstName;
     String family;
     String phone;
@@ -18,38 +16,16 @@ public class Customer implements Serializable,Comparable {
     public Customer() {
     }
 
-    public Customer(String account, String openDate, float balance, String firstName, String family, String phone, String SIN) {
+    public Customer(Account account, String firstName, String family, String phone, String SIN) {
         this.account = account;
-        this.openDate = openDate;
-        this.balance = balance;
         this.firstName = firstName;
         this.family = family;
         this.phone = phone;
         this.SIN = SIN;
     }
 
-    public String getAccount() {
+    public Account getAccount() {
         return account;
-    }
-
-    public void setAccount(String account) {
-        this.account = account;
-    }
-
-    public String getOpenDate() {
-        return openDate;
-    }
-
-    public void setOpenDate(String openDate) {
-        this.openDate = openDate;
-    }
-
-    public float getBalance() {
-        return balance;
-    }
-
-    public void setBalance(float balance) {
-        this.balance = balance;
     }
 
     public String getFirstName() {
@@ -107,13 +83,10 @@ public class Customer implements Serializable,Comparable {
 
     @Override
     public int compareTo(Object o) {
-        Customer otherObject = (Customer)o;
+        Customer otherObject = (Customer) o;
         return this.family.compareTo(otherObject.family);
     }
 
-
-    public static ArrayList<Customer> customers = new ArrayList<>();
-
-
+    public static List<Customer> customers = new ArrayList<>();
 
 }

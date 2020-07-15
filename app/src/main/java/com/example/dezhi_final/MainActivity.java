@@ -11,12 +11,14 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 
+import com.example.dezhi_final.model.Account;
 import com.example.dezhi_final.model.Customer;
 
 import java.util.ArrayList;
 import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
     final static int REQUEST_CODE_DETAIL = 1;
     final static int REQUEST_CODE_WITHDRAW = 2;
 
@@ -39,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initializeCustomersList();
         Collections.sort(Customer.customers);
         ArrayAdapter<Customer> listAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,
-               Customer.customers);
+                Customer.customers);
         // assign the adaptor to the list view
         listView.setAdapter(listAdapter);
 
@@ -47,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         AdapterView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> listViewOfFlowers, View itemView, int position, long id) {
+                // using bundle
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("bundleExtra", Customer.customers.get(position));
                 Intent intent = new Intent(MainActivity.this, DetailActivity.class);
@@ -91,9 +94,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initializeCustomersList() {
         if (Customer.customers.size() == 0) {
-            Customer customer1 = new Customer("1001", "2020-06-18", 1000, "Dezhi", "Ding", "4377666666", "1001");
-            Customer customer2 = new Customer("1002", "2020-06-18", 1000, "Mark", "Tem", "4377666666", "1002");
-            Customer customer3 = new Customer("1003", "2020-06-18", 1000, "York", "Smith", "4377666666", "1003");
+            Customer customer1 = new Customer(new Account("1001", "2020-06-18", 1000), "Dezhi", "Ding", "4377666666", "1001");
+            Customer customer2 = new Customer(new Account("1002", "2020-06-18", 1000), "Mark", "Tem", "4377666667", "1002");
+            Customer customer3 = new Customer(new Account("1003", "2020-06-18", 1000), "York", "Smith", "4377666668", "1003");
             Customer.customers.add(customer1);
             Customer.customers.add(customer2);
             Customer.customers.add(customer3);

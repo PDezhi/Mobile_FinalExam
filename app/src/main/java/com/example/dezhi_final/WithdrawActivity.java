@@ -18,7 +18,7 @@ import java.io.Serializable;
 public class WithdrawActivity extends AppCompatActivity implements View.OnClickListener {
     EditText editTextAmount;
     TextView textViewBalance;
-    Button btnWithDraw, btnGoback;
+    Button btnWithDraw, btnGoBack;
     Customer customer;
     float withdrawAmount = 0;
 
@@ -34,18 +34,21 @@ public class WithdrawActivity extends AppCompatActivity implements View.OnClickL
         textViewBalance = findViewById(R.id.textViewBalance);
         btnWithDraw = findViewById(R.id.btnWithDraw);
         btnWithDraw.setOnClickListener(this);
-        btnGoback = findViewById(R.id.btnGoback);
-        btnGoback.setOnClickListener(this);
-//        Bundle bundle = getIntent().getBundleExtra("intentExtra");
-//        Serializable bundledListOfCustomer = bundle.getSerializable("bundleExtra");
-//        customer = (Customer) bundledListOfCustomer;
+        btnGoBack = findViewById(R.id.btnGoback);
+        btnGoBack.setOnClickListener(this);
+        //Using bundle
+        /*
+        Bundle bundle = getIntent().getBundleExtra("intentExtra");
+        Serializable bundledListOfCustomer = bundle.getSerializable("bundleExtra");
+        customer = (Customer) bundledListOfCustomer;
+        */
         customer = (Customer) getIntent().getSerializableExtra("CurrentFlowerObject");
 
         setValuesToElement(customer);
     }
 
     private void setValuesToElement(Customer customer) {
-        textViewBalance.setText(String.valueOf(customer.getBalance()));
+        textViewBalance.setText(String.valueOf(customer.getAccount().getBalance()));
     }
 
     @Override
@@ -56,7 +59,7 @@ public class WithdrawActivity extends AppCompatActivity implements View.OnClickL
                     Toast.makeText(this, "Please enter the amount!", Toast.LENGTH_LONG).show();
                 } else {
                     withdrawAmount = Float.parseFloat(editTextAmount.getText().toString());
-                    if (withdrawAmount > 0 && (customer.getBalance() - withdrawAmount) >= 0)
+                    if (withdrawAmount > 0 && (customer.getAccount().getBalance() - withdrawAmount) >= 0)
                         showAlertDialogCRUD(view);
                     else
                         Toast.makeText(this, "The amount is over your balance!", Toast.LENGTH_LONG).show();
@@ -70,18 +73,16 @@ public class WithdrawActivity extends AppCompatActivity implements View.OnClickL
 
     private void withDraw() {
 
-        float oldBalance = customer.getBalance();
-
-
+        float oldBalance = customer.getAccount().getBalance();
         float newBalance = oldBalance - withdrawAmount;
         if (newBalance > 0) {
-            customer.setBalance(newBalance);
+            customer.getAccount().setBalance(newBalance);
             int index = Customer.customers.indexOf(customer);
             Customer.customers.set(index, customer);
 
             textViewBalance.setText(String.valueOf(newBalance));
         } else {
-            Toast.makeText(this, "the amount is over your balance!", Toast.LENGTH_LONG);
+            Toast.makeText(this, "the amount is over your balance!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -117,5 +118,4 @@ public class WithdrawActivity extends AppCompatActivity implements View.OnClickL
 
         builder.show();
     }
-
 }
