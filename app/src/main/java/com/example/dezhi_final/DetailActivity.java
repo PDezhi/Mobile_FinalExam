@@ -99,6 +99,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    //Create a new customer object
     private void add() {
         getNewCustomerInfoFromPage();
 
@@ -125,6 +126,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    //Remove a customer by SIN number
     private void remove() {
         getExistCustomerInfoFromPage();
         if (currentCustomer != null) {
@@ -158,6 +160,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    //Find and update a customer by customer SIN number
     private void update() {
         getExistCustomerInfoFromPage();
         if (currentCustomer != null) {
@@ -189,6 +192,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    //Clear all texts fields
     private void clear() {
         editTextAccNo.setText("");
         editTextOpenDate.setText("");
@@ -199,23 +203,36 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         editTextSIN.setText("");
     }
 
+    //Find customer by SIN and populate it in UI
     private void find() {
         String SIN = editTextSIN.getText().toString();
         currentCustomer = null;
+
+
         if (!SIN.equals("")) {
+            // one way to find customer by SIN
             for (Customer one : Customer.customers) {
                 if (one.getSIN().equals(SIN)) {
                     currentCustomer = one;
                 }
             }
+            // other way to find customer by SIN
+            /*try {
+                currentCustomer = Customer.customers.stream().findFirst().filter(o -> o.getSIN().equals(SIN)).get();
+            }
+            catch (Exception e){
+                Toast.makeText(this, "Do not exist the customer with the SIN!", Toast.LENGTH_LONG).show();
+            }*/
+
             if (currentCustomer != null)
                 setValuesToElements();
             else
-                Toast.makeText(this, "Do not exist the customer with the SIN !", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "Do not exist the customer with the SIN!", Toast.LENGTH_LONG).show();
         } else
             Toast.makeText(this, "Please enter the SIN !", Toast.LENGTH_LONG).show();
     }
 
+    // Go to the MainActivity and show all customers
     private void showAll() {
         String strResult = "show_all";
         //------------------------------------ Create an intent and putExtra result string
@@ -227,6 +244,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         finish();
     }
 
+    // populate the customer to page elements
     private void setValuesToElements() {
         editTextAccNo.setText(currentCustomer.getAccount().getAccountNo());
         editTextOpenDate.setText(currentCustomer.getAccount().getOpenDate());
@@ -237,6 +255,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         editTextSIN.setText(currentCustomer.getSIN());
     }
 
+    // for create new customer. Check the data user entered and set currentCustomer using the date user entered
     private void getNewCustomerInfoFromPage() {
         String accountNo = editTextAccNo.getText().toString();
         String openDate = editTextOpenDate.getText().toString();
@@ -265,6 +284,7 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    // for update or delete exist customer. Check the data user entered and set currentCustomer using the date user entered
     private void getExistCustomerInfoFromPage() {
         String accountNo = editTextAccNo.getText().toString();
         String openDate = editTextOpenDate.getText().toString();
@@ -288,17 +308,14 @@ public class DetailActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
+    // check if exist the same Account Number Customer
     public boolean containsAccountNo(final List<Customer> list, final String accountNo) {
         list.stream().findFirst().filter(o -> o.getSIN().equals(accountNo));
         return list.stream().anyMatch(o -> o.getAccount().getAccountNo().equals(accountNo));
     }
 
+    // check if exist the same SIN Customer
     public boolean containsSIN(final List<Customer> list, final String sin) {
         return list.stream().anyMatch(o -> o.getSIN().equals(sin));
     }
-
-//    public Customer getCustomerBySIN(final List<Customer> list, final String sin) {
-//        return list.stream().findFirst().filter(o -> o.getSIN().equals(sin)).get();
-//    }
-
 }
